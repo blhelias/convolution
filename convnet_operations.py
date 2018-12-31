@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # There are 3 main operations in convNet:
 #  * Convolution
 #  * Non-linearity
@@ -6,10 +7,16 @@
 import numpy as np
 
 
-def convolution(grid, filter_grid):
-    """Apply filter with weights to generate feature map
+def convolution(grid, filter_grid, stride=1):
+    """convolution
 
-    TODO: Allow 3 channels (RGB)
+    :param grid: np.array()
+    :param filter_grid: np.array()
+
+   --- Description
+    Apply filter with weights to generate feature map
+
+    TODO: allow user to change stride (K)
     """
     filter_shape = filter_grid.shape
     grid_shape = grid.shape
@@ -22,15 +29,31 @@ def convolution(grid, filter_grid):
     starting_row = 0
     starting_col = 0
 
-    feature_map = np.zeros(shape=(feature_map_size))
-    # Slide the filter over the input image
-    for i in range(feature_map_size[0]):
-        for j in range(feature_map_size[1]):
-            start_coor = (i, j)
-            # Element wise multiply
-            temp_grid = e_wise_product(start_coor, grid, filter_grid)
-            # Add the outputs
-            feature_map[i][j] = temp_grid.sum()
+    if len(grid_shape) == 2:
+        channels = 1
+    elif len(grid_shape) < 2:
+        raise ValueError
+    else:
+        assert grid_shape[2] == filter_shape[2]
+        channels = grid_shape[2]
+
+    for c in range(channels):
+        feature_map = np.zeros(shape=(feature_map_size))
+        # Slide the filter over the input image
+        for i in range(feature_map_size[0]):
+            for j in range(feature_map_size[1]):
+                if channels == 1:
+                    start_coor = (i, j)
+                    # Element wise multiply
+                    temp_grid = e_wise_product(start_coor, grid, filter_grid)
+                    # Add the outputs
+                    feature_map[i][j] = temp_grid.sum()
+                else:
+                    start_coor = (i, j)
+                    # Element wise multiply
+                    temp_grid = e_wise_product(start_coor, grid[:, :, c], filter_grid[:, :, c])
+                    # Add the outputs
+                    feature_map[i][j] += temp_grid.sum()
 
     return feature_map
 
@@ -56,13 +79,15 @@ def ReLU(feature_map):
     return feature_map
 
 def e_wise_product(coor, grid, filter_grid):
-    """Une opération binaire qui pour deux matrices de mêmes dimensions,
-    associe une autre matrice, de même dimension, et où chaque coefficient
-    est le produit terme à terme des deux matrices.
+    """Une operation binaire qui pour deux matrices de memes dimensions,
+    associe une autre matrice, de meme dimension, et ou chaque coefficient
+    est le produit terme a terme des deux matrices.
+
+    TODO: add stride with conditions to prevent indexOutOfRange
     """
     filter_shape = filter_grid.shape
     new_grid = np.zeros(shape=filter_shape)
-    # We could use the function np.multiply()
+
     for i in range(filter_shape[0]):
         for j in range(filter_shape[1]):
             new_grid[i][j] = grid[coor[0]+i][coor[1]+j] * filter_grid[i][j]
@@ -86,7 +111,20 @@ if __name__ == "__main__":
                            [0, 0, 1, -1, -1],
                            [0, 0, 1, -1, 0],
                            [0, -1, 1, 0, 0]])
-    ##################################
 
-    convolution_matrix = convolution(grid, filter_grid)
+    D_grid = np.array([[(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)],
+                        [(0, 0, 0), (0, 0, 0), (1, 2, 1), (2, 1, 0), (1, 0, 2), (2, 0, 0), (0, 0, 0)],
+                        [(0, 0, 0), (1, 1, 1), (1, 1, 2), (0, 1, 2), (1, 2, 0), (0, 0, 2), (0, 0, 0)],
+                        [(0, 0, 0), (0, 2, 2), (0, 1, 2), (2, 0, 0), (2, 2, 0), (1, 0, 0), (0, 0, 0)],
+                        [(0, 0, 0), (1, 1, 2), (1, 1, 0), (1, 2 ,2), (0, 1, 0), (0, 0, 0), (0, 0, 0)],
+                        [(0, 0, 0), (2, 0, 2), (1, 1, 2), (0, 1, 0), (0, 1, 2), (0, 0, 1), (0, 0, 0)],
+                        [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]])
+
+    D_filter = np.array([[(-1, -1, 0), (-1, -1, 1), (0, -1, -1)],
+                          [(-1, 1 ,0), (-1, 1, 0), (-1, -1, 0)],
+                          [(-1, 0, 1), (-1, 1, 1), (1, 0, 0)]])
+    #################################
+
+
+    convolution_matrix = convolution(D_grid, D_filter)
     relu = ReLU(test_relu)

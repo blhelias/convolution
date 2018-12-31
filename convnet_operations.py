@@ -34,17 +34,16 @@ def convolution(grid, filter_grid):
 
     return feature_map
 
-def max_pooling(pool_size=2, strides=None):
+def max_pooling(feature_map, pool_size=2, strides=None):
     """max_pooling
-
+    :param feature_map: np.array, matrix of Integer
     :param pool_size: Integer, size of the max pooling window
     :param strides: Integer, Factor by which to downscale
 
     --- Description
     Down sampling operation that
     """
-
-    return
+    raise NotImplementedError
 
 def ReLU(feature_map):
     """Rectified Linear Unit is an activation fonction that
@@ -53,8 +52,7 @@ def ReLU(feature_map):
     fm_shape = feature_map.shape
     for i in range(fm_shape[0]):
         for j in range(fm_shape[1]):
-            if feature_map[i][j] < 0:
-                feature_map[i][j] = 0
+            feature_map[i][j] = max(0, feature_map[i][j])
     return feature_map
 
 def e_wise_product(coor, grid, filter_grid):
@@ -64,7 +62,7 @@ def e_wise_product(coor, grid, filter_grid):
     """
     filter_shape = filter_grid.shape
     new_grid = np.zeros(shape=filter_shape)
-    # We could use the function multiply from NumPy library
+    # We could use the function np.multiply()
     for i in range(filter_shape[0]):
         for j in range(filter_shape[1]):
             new_grid[i][j] = grid[coor[0]+i][coor[1]+j] * filter_grid[i][j]

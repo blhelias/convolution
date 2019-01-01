@@ -117,19 +117,6 @@ if __name__ == "__main__":
     import random as rd
     from PIL import Image
 
-    #img_shape = (100, 100, 3)
-    #img_array = np.zeros(img_shape)
-
-    #for i in range(img_shape[0]):
-    #    for j in range(img_shape[1]):
-    #        for k in range(img_shape[2]):
-    #            a = rd.randint(0, 255)
-    #            b = rd.randint(0, 255)
-    #            c = rd.randint(0, 255)
-    #            img_array[i][j] = (a, b, c)
-
-    # img = Image.fromarray(np.uint8(img_array))
-    # img.show()
     img_array = np.asarray(Image.open("data/lena_modif.jpeg"))
 
     img = Image.fromarray(np.uint8(img_array))

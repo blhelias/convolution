@@ -32,7 +32,7 @@ def convolution(grid, filter_grid, stride=1):
     if len(grid_shape) == 2:
         channels = 1
     elif len(grid_shape) < 2:
-        raise ValueError
+        raise ValueError("Wrong Dimensions: D < 2")
     else:
         assert grid_shape[2] == filter_shape[2]
         channels = grid_shape[2]
@@ -42,35 +42,49 @@ def convolution(grid, filter_grid, stride=1):
         # Slide the filter over the input image
         for i in range(feature_map_size[0]):
             for j in range(feature_map_size[1]):
+                start_coor = (i, j)
                 if channels == 1:
-                    start_coor = (i, j)
                     # Element wise multiply
                     temp_grid = e_wise_product(start_coor, grid, filter_grid)
                     # Add the outputs
                     feature_map[i][j] = temp_grid.sum()
                 else:
-                    start_coor = (i, j)
                     # Element wise multiply
-                    temp_grid = e_wise_product(start_coor, grid[:, :, c], filter_grid[:, :, c])
+                    temp_grid = e_wise_product(start_coor, grid[:, :, c],
+                                               filter_grid[:, :, c])
                     # Add the outputs
                     feature_map[i][j] += temp_grid.sum()
 
     return feature_map
 
-def max_pooling(feature_map, pool_size=2, strides=None):
+def max_pooling(feature_map, pool_size=2, strides=2):
     """max_pooling
     :param feature_map: np.array, matrix of Integer
     :param pool_size: Integer, size of the max pooling window
     :param strides: Integer, Factor by which to downscale
 
     --- Description
-    Down sampling operation that
+    Down sampling operation that prevent overfitting
+    crop the image if image_size % pool_size != 0
     """
-    raise NotImplementedError
+    fm_shape = feature_map.shape
+    W = (fm_shape[1] - pool_size) // strides + 1
+    H = (fm_shape[0] - pool_size) // strides + 1
+    output_map = np.zeros((H, W))
+    for i in range(H):
+        for j in range(W):
+            output_map[i][j] = np.max(feature_map[i*strides: i*strides + pool_size, j*strides: j*strides + pool_size])
+    return output_map
 
 def ReLU(feature_map):
-    """Rectified Linear Unit is an activation fonction that
-    replace all negative values of a matrix by 0
+    """ReLU
+
+    :param feature_map: np.array()
+
+    --- DEscription
+    Rectified Linear Unit is an activation fonction that
+    replace all negative values of a matrix by 0.
+    --> z = max(0, z)
     """
     fm_shape = feature_map.shape
     for i in range(fm_shape[0]):
@@ -82,8 +96,6 @@ def e_wise_product(coor, grid, filter_grid):
     """Une operation binaire qui pour deux matrices de memes dimensions,
     associe une autre matrice, de meme dimension, et ou chaque coefficient
     est le produit terme a terme des deux matrices.
-
-    TODO: add stride with conditions to prevent indexOutOfRange
     """
     filter_shape = filter_grid.shape
     new_grid = np.zeros(shape=filter_shape)
@@ -125,6 +137,7 @@ if __name__ == "__main__":
                           [(-1, 0, 1), (-1, 1, 1), (1, 0, 0)]])
     #################################
 
-
     convolution_matrix = convolution(D_grid, D_filter)
     relu = ReLU(test_relu)
+    max_pooling = max_pooling(grid)
+

@@ -1,4 +1,4 @@
-from ..convnet_operations import max_pooling, convolution, ReLU
+from .convnet_operations import max_pooling, convolution, ReLU
 import numpy as np
 
 filter_grid = np.array([[1, 0, 1],

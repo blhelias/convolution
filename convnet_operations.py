@@ -54,7 +54,7 @@ def convolution(grid, filter_grid, stride=1):
                                                filter_grid[:, :, c])
                     # Add the outputs
                     feature_map[i][j] += temp_grid.sum()
-
+    print("[CONV] output size --> {0}".format(feature_map.shape))
     return feature_map
 
 def max_pooling(feature_map, pool_size=2, strides=2):
@@ -65,7 +65,8 @@ def max_pooling(feature_map, pool_size=2, strides=2):
 
     --- Description
     Down sampling operation that prevent overfitting
-    crop the image if image_size % pool_size != 0
+
+    TODO: find other solution rather than crop the image if image_size % pool_size != 0
     """
     fm_shape = feature_map.shape
     W = (fm_shape[1] - pool_size) // strides + 1
@@ -73,7 +74,11 @@ def max_pooling(feature_map, pool_size=2, strides=2):
     output_map = np.zeros((H, W))
     for i in range(H):
         for j in range(W):
-            output_map[i][j] = np.max(feature_map[i*strides: i*strides + pool_size, j*strides: j*strides + pool_size])
+            max_pool_value = np.max(feature_map[i*strides: i*strides + pool_size,
+                                    j*strides: j*strides + pool_size])
+            output_map[i][j] = max_pool_value
+
+    print("[MAX POOL] output size --> {0} ".format(output_map.shape))
     return output_map
 
 def ReLU(feature_map):
@@ -135,9 +140,36 @@ if __name__ == "__main__":
     D_filter = np.array([[(-1, -1, 0), (-1, -1, 1), (0, -1, -1)],
                           [(-1, 1 ,0), (-1, 1, 0), (-1, -1, 0)],
                           [(-1, 0, 1), (-1, 1, 1), (1, 0, 0)]])
-    #################################
 
-    convolution_matrix = convolution(D_grid, D_filter)
-    relu = ReLU(test_relu)
-    max_pooling = max_pooling(grid)
+    import random as rd
+    from PIL import Image
+
+    #img_shape = (100, 100, 3)
+    #img_array = np.zeros(img_shape)
+
+    #for i in range(img_shape[0]):
+    #    for j in range(img_shape[1]):
+    #        for k in range(img_shape[2]):
+    #            a = rd.randint(0, 255)
+    #            b = rd.randint(0, 255)
+    #            c = rd.randint(0, 255)
+    #            img_array[i][j] = (a, b, c)
+
+    # img = Image.fromarray(np.uint8(img_array))
+    # img.show()
+    img_array = np.asarray(Image.open("data/lena_modif.jpeg"))
+
+    img = Image.fromarray(np.uint8(img_array))
+    img.show()
+    #################################
+    print("[INPUT] image size --> {0}".format(img_array.shape))
+
+    convolution_matrix = convolution(img_array, D_filter)
+    img = Image.fromarray(np.uint8(convolution_matrix)).show()
+
+    relu = ReLU(convolution_matrix)
+    img = Image.fromarray(np.uint8(relu)).show()
+
+    max_pooling = max_pooling(convolution_matrix)
+    img = Image.fromarray(np.uint8(max_pooling)).show()
 

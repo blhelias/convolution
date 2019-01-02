@@ -112,8 +112,10 @@ def e_wise_product(coor, grid, filter_grid):
     return new_grid
 
 if __name__ == "__main__":
-    ########## TEST ARRAYS ##########
 
+    D_filter = np.array([[(-1, -1, 0), (-1, -1, 1), (0, -1, -1)],
+                      [(-1, 1 ,0), (-1, 1, 0), (-1, -1, 0)],
+                      [(-1, 0, 1), (-1, 1, 1), (1, 0, 0)]])
     import random as rd
     from PIL import Image
 

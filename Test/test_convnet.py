@@ -14,7 +14,7 @@ import numpy as np
 
 # img = Image.fromarray(np.uint8(img_array))
 # img.show()
-
+########## TEST ARRAYS ##########
 filter_grid = np.array([[1, 0, 1],
                         [0, 1, 0],
                         [1, 0, 1]])

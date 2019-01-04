@@ -45,13 +45,18 @@ def convolution(grid, filter_grid, stride=1):
                 start_coor = (i, j)
                 if channels == 1:
                     # Element wise multiply
-                    temp_grid = e_wise_product(start_coor, grid, filter_grid)
+                    # temp_grid = e_wise_product(start_coor, grid, filter_grid)
+                    grid_chunck = grid[start_coor[0]:start_coor[0]+filter_shape[0],
+                                       start_coor[1]:start_coor[1]+filter_shape[1]]
+                    temp_grid = np.multiply(filter_grid, grid_chunck)
                     # Add the outputs
                     feature_map[i][j] = temp_grid.sum()
                 else:
                     # Element wise multiply
-                    temp_grid = e_wise_product(start_coor, grid[:, :, c],
-                                               filter_grid[:, :, c])
+                    grid_chunck = grid[start_coor[0]:start_coor[0]+filter_shape[0],
+                                       start_coor[1]:start_coor[1]+filter_shape[1],
+                                       c]
+                    temp_grid = np.multiply(filter_grid[:, :, c], grid_chunck)
                     # Add the outputs
                     feature_map[i][j] += temp_grid.sum()
     print("[CONV] output size --> {0}".format(feature_map.shape))
@@ -112,10 +117,13 @@ def e_wise_product(coor, grid, filter_grid):
     return new_grid
 
 if __name__ == "__main__":
+    import timeit
+    # start timer
+    start = timeit.default_timer()
 
     D_filter = np.array([[(-1, -1, 0), (-1, -1, 1), (0, -1, -1)],
-                      [(-1, 1 ,0), (-1, 1, 0), (-1, -1, 0)],
-                      [(-1, 0, 1), (-1, 1, 1), (1, 0, 0)]])
+                         [(-1, 1 ,0), (-1, 1, 0), (-1, -1, 0)],
+                         [(-1, 0, 1), (-1, 1, 1), (1, 0, 0)]])
     import random as rd
     from PIL import Image
 
@@ -134,4 +142,6 @@ if __name__ == "__main__":
 
     max_pooling = max_pooling(convolution_matrix)
     img = Image.fromarray(np.uint8(max_pooling)).show()
-
+    # stop timer
+    stop = timeit.default_timer()
+    print('Time: ', stop - start)

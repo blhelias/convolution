@@ -43,22 +43,24 @@ def convolution(grid, filter_grid, stride=1):
         for i in range(feature_map_size[0]):
             for j in range(feature_map_size[1]):
                 start_coor = (i, j)
+                # Check if it's a grey scale image
                 if channels == 1:
-                    # Element wise multiply
-                    # temp_grid = e_wise_product(start_coor, grid, filter_grid)
+                    # Element wise multiplication
                     grid_chunck = grid[start_coor[0]:start_coor[0]+filter_shape[0],
                                        start_coor[1]:start_coor[1]+filter_shape[1]]
                     temp_grid = np.multiply(filter_grid, grid_chunck)
                     # Add the outputs
                     feature_map[i][j] = temp_grid.sum()
+                # It's an RGB image
                 else:
-                    # Element wise multiply
+                    # Element wise multiplication
                     grid_chunck = grid[start_coor[0]:start_coor[0]+filter_shape[0],
                                        start_coor[1]:start_coor[1]+filter_shape[1],
                                        c]
                     temp_grid = np.multiply(filter_grid[:, :, c], grid_chunck)
                     # Add the outputs
                     feature_map[i][j] += temp_grid.sum()
+
     print("[CONV] output size --> {0}".format(feature_map.shape))
     return feature_map
 
@@ -102,19 +104,6 @@ def ReLU(feature_map):
             feature_map[i][j] = max(0, feature_map[i][j])
     return feature_map
 
-def e_wise_product(coor, grid, filter_grid):
-    """Une operation binaire qui pour deux matrices de memes dimensions,
-    associe une autre matrice, de meme dimension, et ou chaque coefficient
-    est le produit terme a terme des deux matrices.
-    """
-    filter_shape = filter_grid.shape
-    new_grid = np.zeros(shape=filter_shape)
-
-    for i in range(filter_shape[0]):
-        for j in range(filter_shape[1]):
-            new_grid[i][j] = grid[coor[0]+i][coor[1]+j] * filter_grid[i][j]
-
-    return new_grid
 
 if __name__ == "__main__":
     import timeit
@@ -126,20 +115,18 @@ if __name__ == "__main__":
                          [(-1, 0, 1), (-1, 1, 1), (1, 0, 0)]])
     import random as rd
     from PIL import Image
-
-    img_array = np.asarray(Image.open("data/lena_modif.jpeg"))
-
-    img = Image.fromarray(np.uint8(img_array))
+    # Read image
+    img = Image.open("data/lena_modif.jpeg")
     img.show()
-    #################################
+    img_array = np.asarray(img)
     print("[INPUT] image size --> {0}".format(img_array.shape))
-
+    # Convolution layer
     convolution_matrix = convolution(img_array, D_filter)
     img = Image.fromarray(np.uint8(convolution_matrix)).show()
-
+    # ReLU activation
     relu = ReLU(convolution_matrix)
     img = Image.fromarray(np.uint8(relu)).show()
-
+    # Max pooling layer
     max_pooling = max_pooling(convolution_matrix)
     img = Image.fromarray(np.uint8(max_pooling)).show()
     # stop timer

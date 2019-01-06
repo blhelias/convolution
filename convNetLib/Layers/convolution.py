@@ -9,7 +9,6 @@ class Convolution(Layers):
         self.kernel_shape = kernel_shape # (Height, Width, Channels)
         self.strides = strides
         # initialize filters (n_filters, kernel_shape)
-        # TODO move it into the forward method?
         self.filters = np.random.randint(-1, 2, (self.n_filters,
                                                  self.kernel_shape[0],
                                                  self.kernel_shape[1],
@@ -39,16 +38,16 @@ class Convolution(Layers):
     def _convolution(self, inputs, fltr, H, W):
         """convolution
 
-        :param grid: np.array()
-        :param filter_grid: np.array()
+        :param inputs: np.array()
+        :param fltr: np.array()
+        :param H: Height of the feature map
+        :parm W: Width of the feature map
 
         --- Description
         Apply filter with weights to generate feature map
-
-        TODO: allow user to change stride (K)
         """
         input_shape = inputs.shape
-        depth = input_shape[2]
+
         # check that the filter size is smaller than the image
         assert self.kernel_shape[0] <= input_shape[0] and self.kernel_shape[1] <= input_shape[1]
         # check dimensions of the input
@@ -56,10 +55,14 @@ class Convolution(Layers):
         # Check that filter and imput have the same depth
         assert input_shape[2] == self.kernel_shape[2]
         # determine the size of the feature map
+
         feature_map_size = (H, W)
-        print(H, W)
+        depth = input_shape[2]
+
         for d in range(depth):
+
             feature_map = np.zeros(shape=(feature_map_size))
+
             # Slide the filter over the input image
             for i in range(feature_map_size[0]):
                 for j in range(feature_map_size[1]):
@@ -82,8 +85,5 @@ class Convolution(Layers):
                         # Add the outputs
                         feature_map[i][j] += m.sum()
 
-        print("[CONV] output size --> {0}".format(feature_map.shape))
+        # print("[CONV] output size --> {0}".format(feature_map.shape))
         return feature_map
-
-if __name__ == "__main__":
-    conv = Convolution(2, (3, 3, 3))

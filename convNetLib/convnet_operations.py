@@ -4,6 +4,8 @@
 #  * Non-linearity
 #  * Pooling
 
+from ..Layers import Layers
+
 import numpy as np
 
 

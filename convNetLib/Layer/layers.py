@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+
 import numpy as np
 
-class Layers:
-    def __init(self):
+
+class Layer:
+    def __init__(self):
         pass
 
     def forward(self, inputs):

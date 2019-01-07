@@ -1,8 +1,9 @@
-from ..Layers import Layers
+#-*- coding: utf-8 -*-
 
+from convNetLib.Layer import Layer
 import numpy as np
 
-class Convolution(Layers):
+class Convolution(Layer):
     def __init__(self, n_filters, kernel_shape, strides=(1, 1)):
         super().__init__()
         self.n_filters = n_filters
@@ -31,7 +32,7 @@ class Convolution(Layers):
         output = np.zeros(output_shape)
         for fltr_i in range(D):
             output[:, :, fltr_i] = self._convolution(inputs, self.filters[fltr_i], H, W)
-        print("output size: ", output.shape)
+        print("[CONV] output size: ", output.shape)
         return output
 
 
@@ -66,24 +67,13 @@ class Convolution(Layers):
             # Slide the filter over the input image
             for i in range(feature_map_size[0]):
                 for j in range(feature_map_size[1]):
-                    # Check if it's a grey scale image
-                    if depth == 1:
-                        # Element wise multiplication
-                        inputs_chunck = inputs[i: i + self.kernel_shape[0],
-                                               j: j + self.kernel_shape[1]]
-                        m = np.multiply(fltr, inputs_chunck)
-                        # Add the outputs
-                        feature_map[i][j] = m.sum()
-
-                    # It's an RGB image
-                    else:
-                        # Element wise multiplication
-                        inputs_chunck = inputs[i: i + self.kernel_shape[0],
-                                               j: j + self.kernel_shape[1],
-                                               d]
-                        m = np.multiply(fltr[:, :, d], inputs_chunck)
-                        # Add the outputs
-                        feature_map[i][j] += m.sum()
+                    # Element wise multiplication
+                    inputs_chunck = inputs[i: i + self.kernel_shape[0],
+                                           j: j + self.kernel_shape[1],
+                                           d]
+                    m = np.multiply(fltr[:, :, d], inputs_chunck)
+                    # Add the outputs
+                    feature_map[i][j] += m.sum()
 
         # print("[CONV] output size --> {0}".format(feature_map.shape))
         return feature_map

@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
-
-from convNetLib.Layers import Layers
+from convNetLib.Layer import Layer
 
 import numpy as np
 
 
-class Pooling(Layers):
+class Pooling(Layer):
+    """Pooling"""
     def __init__(self, pool_size=2, strides=2):
         super().__init__()
         self.pool_size = pool_size
         self.strides = strides
 
     def forward(self, inputs):
+        """forward
+
+        :param inputs: np.array()
+        """
         input_shape = inputs.shape
-        # TODO: get output size
+        # Get output size
         H = (input_shape[0] - self.pool_size) // self.strides + 1
         W = (input_shape[1] - self.pool_size) // self.strides + 1
         D = input_shape[2]
         output_shape = (H, W, D)
-        # empty array initialization
+        # Empty array initialization
         output = np.zeros(output_shape)
         for i in range(D):
-            output[:, :, i] = self._pooling(inputs, H, W)
-        print("output size: ", output.shape)
+            output[:, :, i] = self.max_pooling(inputs, H, W)
+        print("[MAX POOL] output size: ", output.shape)
         return output
 
-    def _pooling(self, feature_map, H, W):
+    def max_pooling(self, feature_map, H, W):
         """max_pooling
         :param feature_map: np.array, matrix of Integer
         :param pool_size: Integer, size of the max pooling window
@@ -46,5 +50,3 @@ class Pooling(Layers):
 
         # print("[MAX POOL] output size --> {0} ".format(output_map.shape))
         return output_map
-
-

@@ -40,7 +40,10 @@ def relu_prime(x):
     for i in range(x_shape[0]):
         for j in range(x_shape[1]):
             for k in range(x_shape[2]):
-                x[i][j] = max(0, x[i][j][k])
+                if x[i][j][k] > 0:
+                    x[i][j][k] = 1
+                else:
+                    x[i][j][k] = 0
     return x
 
 

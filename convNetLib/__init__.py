@@ -1,3 +1,5 @@
 __all__ = [
-        'Layer'
+        'Layer',
+        'Loss',
+        'Optimizer'
         ]

@@ -25,7 +25,7 @@ class Pooling(Layer):
         # Empty array initialization
         output = np.zeros(output_shape)
         for i in range(D):
-            output[:, :, i] = self.max_pooling(inputs, H, W)
+            output[:, :, i] = self.max_pooling(inputs[:, :, i], H, W)
         print("[MAX POOL] output size: ", output.shape)
         return output
 

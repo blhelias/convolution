@@ -23,7 +23,7 @@ def relu(x):
     for i in range(x_shape[0]):
         for j in range(x_shape[1]):
             for k in range(x_shape[2]):
-                x[i][j] = max(0, x[i][j][k])
+                x[i, j, k] = max(0, x[i, j, k])
     print("[ReLU] output shape: ", x_shape)
     return x
 
@@ -34,16 +34,16 @@ def relu_prime(x):
 
     -- Descripion
     dy/dx = 1 if    x > 0
-              else  x <= 0
+            0  else  x <= 0
     """
     x_shape = x.shape
     for i in range(x_shape[0]):
         for j in range(x_shape[1]):
             for k in range(x_shape[2]):
-                if x[i][j][k] > 0:
-                    x[i][j][k] = 1
+                if x[i, j, k] > 0:
+                    x[i, j, k] = 1
                 else:
-                    x[i][j][k] = 0
+                    x[i, j, k] = 0
     return x
 
 

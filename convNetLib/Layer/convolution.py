@@ -1,5 +1,8 @@
 #-*- coding: utf-8 -*-
-
+"""
+TODO:
+    ADD padding to keep initial size use np.pad()
+"""
 from convNetLib.Layer import Layer
 import numpy as np
 
@@ -23,6 +26,7 @@ class Convolution(Layer):
         -- Description
         The forward operation
         """
+        inputs = np.pad(inputs, ((1, 1), (1, 1), (0, 0)), mode='constant')
         input_shape = inputs.shape
         H = (input_shape[0] - self.kernel_shape[0]) // self.strides[0] + 1
         W = (input_shape[1] - self.kernel_shape[1]) // self.strides[1] + 1
@@ -47,6 +51,7 @@ class Convolution(Layer):
         --- Description
         Apply filter with weights to generate feature map
         """
+
         input_shape = inputs.shape
 
         # check that the filter size is smaller than the image

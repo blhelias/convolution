@@ -2,4 +2,9 @@
 
 Implement simple operations to understand how ConvNets work. 
 
-NEXT STEP: build ConvNet library !
+TODO:
+* Implement Loss class
+* Implement Optimizer class
+* Layer class:
+  * Implement Fully Connected (FC) Layers
+  * Try to optimize convolution operation

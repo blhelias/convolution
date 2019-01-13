@@ -34,7 +34,7 @@ class Convolution(Layer):
         D = self.n_filters
 
         self.output_shape = (H, W, D)
-        output = np.zeros(output_shape)
+        output = np.zeros(self.output_shape)
         for fltr_i in range(D):
             output[:, :, fltr_i] = self._convolution(inputs, self.filters[fltr_i], H, W)
         self.compute_time = time.time() - start_time

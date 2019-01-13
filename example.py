@@ -6,13 +6,15 @@ import numpy as np
 
 
 if __name__ == "__main__":
+
     ### IMG TEST ###
     img = Image.open("convNetLib/data/sunset.png")
     img_array = np.asarray(np.uint8(img))
     img.show()
     print("[INPUT] input size: {}".format(img_array.shape))
     ################
-    model = ConvNet([
+
+    VGG16 = ConvNet([
             Convolution(64, (3, 3, 3)),
             ReLU(),
             Convolution(64, (3, 3, 64)),
@@ -37,12 +39,24 @@ if __name__ == "__main__":
             Convolution(512, (3, 3, 512)),
             ReLU(),
             Pooling(),
-            Convolution(256, (3, 3, 512)),
+            Convolution(512, (3, 3, 512)),
             ReLU(),
-            Convolution(256, (3, 3, 512)),
+            Convolution(512, (3, 3, 512)),
             ReLU(),
-            Convolution(256, (3, 3, 512)),
+            Convolution(512, (3, 3, 512)),
             ReLU(),
             Pooling(),
+            # FC,
+            # FC,
+            # FC
         ])
-    model.forward(img_array)
+
+    VGG16.forward(img_array)
+    # Train example
+
+    #for epoch in range n_epochs:
+    #    pred = VGG16.forward(img_array) # replace img_array with batch of images
+    #    epoch_loss = Loss() # MSE, RMSE, CROSS_entriopy ....
+    #    grad = loss.grad(predicted, batch.targets)
+    #    VGG16.backward(grad)
+

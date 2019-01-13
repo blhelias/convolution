@@ -1,10 +1,7 @@
 #-*- coding: utf-8 -*-
-"""
-TODO:
-    ADD padding to keep initial size use np.pad()
-"""
 from convNetLib.Layer import Layer
 import numpy as np
+
 
 class Convolution(Layer):
     def __init__(self, n_filters, kernel_shape, strides=(1, 1)):
@@ -51,7 +48,6 @@ class Convolution(Layer):
         --- Description
         Apply filter with weights to generate feature map
         """
-
         input_shape = inputs.shape
 
         # check that the filter size is smaller than the image
@@ -76,9 +72,10 @@ class Convolution(Layer):
                     inputs_chunck = inputs[i: i + self.kernel_shape[0],
                                            j: j + self.kernel_shape[1],
                                            d]
-                    m = np.multiply(fltr[:, :, d], inputs_chunck)
+                    # m = np.multiply(fltr[:, :, d], inputs_chunck)
                     # Add the outputs
-                    feature_map[i][j] += m.sum()
+                    # feature_map[i][j] += m.sum()
+                    feature_map[i][j] = np.tensordot(fltr[:, :, d], inputs_chunck, axes=((0,1),(0,1)))
 
         # print("[CONV] output size --> {0}".format(feature_map.shape))
         return feature_map

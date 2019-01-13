@@ -1,4 +1,8 @@
 #-*- coding: utf-8 -*-
+"""
+TODO:
+    implement backpropagation step
+"""
 from convNetLib.Layer import Layer
 import numpy as np
 
@@ -23,6 +27,9 @@ class Convolution(Layer):
         -- Description
         The forward operation
         """
+        # We use padding not only to preserve initial size of the image but also
+        # to keep information at the border of the image, otherwise the information
+        # would vanish through convolution step (reduce size)
         inputs = np.pad(inputs, ((1, 1), (1, 1), (0, 0)), mode='constant')
         input_shape = inputs.shape
         H = (input_shape[0] - self.kernel_shape[0]) // self.strides[0] + 1

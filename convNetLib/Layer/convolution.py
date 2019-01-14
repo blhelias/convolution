@@ -41,6 +41,8 @@ class Convolution(Layer):
         print(self)
         return output
 
+    def backward(self, grad):
+        raise NotImplementedError
 
     def _convolution(self, inputs, fltr, H, W):
         """convolution

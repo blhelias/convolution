@@ -1,3 +1,4 @@
+#-*- coding: utf_8 -*-
 from convNetLib.Layer import Convolution, ReLU, Pooling
 from convNetLib.ConvNet import ConvNet
 
@@ -14,13 +15,22 @@ if __name__ == "__main__":
     print("[INPUT] input size: {}".format(img_array.shape))
     ################
 
-    model = ConvNet([
-        Convolution(2, (3, 3, 3)),
-        ReLU(),
-        Pooling()
-        ])
+    pool = Pooling()
+    conv = Convolution(5, (3, 3, 3))
+    relu = ReLU()
 
-    model.forward(img_array)
+    inputs = conv.forward(img_array)
+    inputs = relu.forward(inputs)
+    inputs = pool.forward(inputs)
+
+    grad = pool.backward(inputs)
+    #model = ConvNet([
+    #    Convolution(2, (3, 3, 3)),
+    #    ReLU(),
+    #    Pooling()
+    #    ])
+
+    #model.forward(img_array)
 
     #VGG16 = ConvNet([
     #        Convolution(64, (3, 3, 3)),

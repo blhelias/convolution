@@ -8,4 +8,4 @@ TODO:
 * Layer class:
   * Implement Fully Connected (FC) Layers
   * Try to optimize convolution operation
-  * Implement backward step for convolution and pooling
+  * Implement backward step for convolution

@@ -25,18 +25,30 @@ class Convolution(Layer):
         -- Description
         The forward operation
         """
+        # Initialize timer
         start_time = time.time()
 
+        # Add zero padding to preserve output size
         inputs = np.pad(inputs, ((1, 1), (1, 1), (0, 0)), mode='constant')
+
+        # Retrieve inputs shape
         input_shape = inputs.shape
+
+        # Compute dimension of the output
         H = (input_shape[0] - self.kernel_shape[0]) // self.strides[0] + 1
         W = (input_shape[1] - self.kernel_shape[1]) // self.strides[1] + 1
         D = self.n_filters
 
+        # Save output shape and initialize empty output filled with zeros
         self.output_shape = (H, W, D)
         output = np.zeros(self.output_shape)
+
+        # Iterate over depth of the inputs
         for fltr_i in range(D):
-            output[:, :, fltr_i] = self._convolution(inputs, self.filters[fltr_i], H, W)
+            # Apply convolution
+            output[:, :, fltr_i] = self.convolution(inputs, self.filters[fltr_i], H, W)
+
+        # Save processed time
         self.compute_time = time.time() - start_time
         print(self)
         return output
@@ -44,7 +56,7 @@ class Convolution(Layer):
     def backward(self, grad):
         raise NotImplementedError
 
-    def _convolution(self, inputs, fltr, H, W):
+    def convolution(self, inputs, fltr, H, W):
         """convolution
 
         :param inputs: np.array()
@@ -55,6 +67,7 @@ class Convolution(Layer):
         --- Description
         Apply filter with weights to generate feature map
         """
+        # Retrieve input shape
         input_shape = inputs.shape
 
         # check that the filter size is smaller than the image
@@ -63,13 +76,13 @@ class Convolution(Layer):
         assert len(input_shape) == 3
         # Check that filter and imput have the same depth
         assert input_shape[2] == self.kernel_shape[2]
-        # determine the size of the feature map
 
+        # compute the size of the feature map
         feature_map_size = (H, W)
         depth = input_shape[2]
 
         for d in range(depth):
-
+            # Initialize empty output filled with zeros
             feature_map = np.zeros(shape=(feature_map_size))
 
             # Slide the filter over the input image
@@ -79,12 +92,10 @@ class Convolution(Layer):
                     inputs_chunck = inputs[i: i + self.kernel_shape[0],
                                            j: j + self.kernel_shape[1],
                                            d]
-                    # m = np.multiply(fltr[:, :, d], inputs_chunck)
+
                     # Add the outputs
-                    # feature_map[i][j] += m.sum()
                     feature_map[i][j] = np.tensordot(fltr[:, :, d], inputs_chunck, axes=((0,1),(0,1)))
 
-        # print("[CONV] output size --> {0}".format(feature_map.shape))
         return feature_map
 
     def __repr__(self):

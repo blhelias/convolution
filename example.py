@@ -9,7 +9,7 @@ import numpy as np
 if __name__ == "__main__":
 
     ### IMG TEST ###
-    img = Image.open("convNetLib/data/sunset.png")
+    img = Image.open("convNetLib/data/rabbit.jpeg")
     img_array = np.asarray(np.uint8(img))
     img.show()
     print("[INPUT] input size: {}".format(img_array.shape))

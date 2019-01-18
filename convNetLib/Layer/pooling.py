@@ -36,9 +36,13 @@ class Pooling(Layer):
         return self.output
 
     def backward(self, grad):
+        """backward
+
+        :param grad: np.array()
+        """
         depth = grad.shape[2]
         output = np.zeros((grad.shape[0]*self.pool_size, grad.shape[1]*self.pool_size, depth))
-        for i in range(depth): #On parcourt la prfondeur de la grille
+        for i in range(depth): # On parcourt la profondeur de la grille
             reversed_pool = grad[:, :, i].repeat(self.pool_size, axis=0).repeat(self.pool_size, axis=1)
             output[:, :, i] = reversed_pool * self.index_memory[:, :, i]
         return output
@@ -57,17 +61,16 @@ class Pooling(Layer):
         fm_shape = feature_map.shape
         output_map = np.zeros((H, W))
 
-        for i in range(0, H, 2):
-            for j in range(0, W, 2):
+        for i in range(0, H // 2):
+            for j in range(0, W // 2):
                 kernel = feature_map[i*self.strides: i*self.strides + self.pool_size,
                                         j*self.strides: j*self.strides + self.pool_size]
                 max_pool_index = np.unravel_index(np.argmax(kernel, axis=None), kernel.shape)
                 output_map[i][j] = kernel[max_pool_index[0]][max_pool_index[1]]
-                self.index_memory[i+max_pool_index[0], j+max_pool_index[1], depth_i] = 1
+                self.index_memory[i*self.strides+max_pool_index[0], j*self.strides+max_pool_index[1], depth_i] = 1
 
         return output_map
 
     def __repr__(self):
-        # TODO: add time !
         return "[MAX POOL] output size --> {0} | {1} seconds ".format(self.output.shape, self.compute_time)
 

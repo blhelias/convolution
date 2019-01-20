@@ -61,12 +61,17 @@ class Pooling(Layer):
         fm_shape = feature_map.shape
         output_map = np.zeros((H, W))
 
-        for i in range(0, H // 2):
-            for j in range(0, W // 2):
-                kernel = feature_map[i*self.strides: i*self.strides + self.pool_size,
+        for i in range(0, H):
+            for j in range(0, W):
+
+                region = feature_map[i*self.strides: i*self.strides + self.pool_size,
                                         j*self.strides: j*self.strides + self.pool_size]
-                max_pool_index = np.unravel_index(np.argmax(kernel, axis=None), kernel.shape)
-                output_map[i][j] = kernel[max_pool_index[0]][max_pool_index[1]]
+
+                # get coordinates of the max value of the region
+                max_pool_index = np.unravel_index(np.argmax(region, axis=None), region.shape)
+                # Insert max value of the region in the corresponding output index
+                output_map[i][j] = region[max_pool_index[0]][max_pool_index[1]]
+                # Keep track of the max value index
                 self.index_memory[i*self.strides+max_pool_index[0], j*self.strides+max_pool_index[1], depth_i] = 1
 
         return output_map

@@ -46,7 +46,9 @@ class Convolution(Layer):
         # Iterate over depth of the inputs
         for fltr_i in range(D):
             # Apply convolution
-            output[:, :, fltr_i] = self.convolution(inputs, self.filters[fltr_i], H, W)
+            output[:, :, fltr_i] = self.convolution(inputs,
+                                                    self.filters[fltr_i],
+                                                    H, W)
 
         # Save processed time
         self.compute_time = time.time() - start_time
@@ -94,8 +96,12 @@ class Convolution(Layer):
                                            d]
 
                     # Add the outputs
-                    feature_map[i][j] = np.tensordot(fltr[:, :, d], inputs_chunck, axes=((0,1),(0,1)))
+                    feature_map[i][j] = np.tensordot(fltr[:, :, d],
+                                                     inputs_chunck,
+                                                     axes=((0,1),(0,1)))
 
+        # Apply normalization
+        feature_map = feature_map // (feature_map.max() / 255)
         return feature_map
 
     def __repr__(self):

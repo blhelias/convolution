@@ -15,15 +15,29 @@ if __name__ == "__main__":
     print("[INPUT] input size: {}".format(img_array.shape))
     ################
 
+    # Initialize Layers
     pool = Pooling()
     conv = Convolution(5, (3, 3, 3))
     relu = ReLU()
+    # END
 
+    # forward pass CONV
     inputs = conv.forward(img_array)
+    # forward pass ReLU
     inputs = relu.forward(inputs)
+    for i in range(5):
+        img = Image.fromarray(inputs[:, :, i])
+        img.show()
+        print(inputs[: ,:, i])
+
+    # forward pass pooling
     inputs = pool.forward(inputs)
 
+    # backward pass pooling
     grad = pool.backward(inputs)
+
+    # backward pass reLU
+    grad = relu.backward(grad)
     #model = ConvNet([
     #    Convolution(2, (3, 3, 3)),
     #    ReLU(),

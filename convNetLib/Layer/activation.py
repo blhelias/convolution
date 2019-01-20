@@ -4,7 +4,6 @@ import numpy as np
 
 from convNetLib.Layer import Layer
 
-
 class Activation(Layer):
     def __init__(self, f, f_prime):
         super().__init__()
